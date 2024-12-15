@@ -59,7 +59,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 2. Uruchamiamy Super-Linter
+       # 2. Instalujemy Prettier i formatowanie dla plików JS/HTML/CSS
+      - name: Install Prettier
+        run: |
+          npm install -g prettier
+
+      # 3. Uruchamiamy Prettier na plikach JS, HTML, CSS, itp.
+      - name: Run Prettier
+        run: |
+          prettier --write "**/*.{js,jsx,ts,tsx,html,css,json,md}"
+
+      # 4. Uruchamiamy Super-Linter
       - name: Super-Linter
         uses: github/super-linter@v5
         env:
