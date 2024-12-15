@@ -62,7 +62,6 @@ jobs:
       - name: Prettier format
         run: npx prettier --write .github/workflows/**/*.yml
       
-
       # 4. Uruchamiamy Super-Linter
       - name: Super-Linter
         uses: super-linter/super-linter/slim@v7.1.0
@@ -70,7 +69,7 @@ jobs:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_PYTHON_RUFF: true
-          RUN_LINTERS: "ruff"  # Uruchomienie tylko lintera ruff
+          
 
   # Job 3: Tworzenie Issues z TODO
   todo-to-issue:
