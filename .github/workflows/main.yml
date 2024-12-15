@@ -3,10 +3,10 @@ name: Unit tests, TODOs to issues and linting
 on:
   push:
     branches:
-      - master  # Uruchomi się przy pushu na gałąź master
+      - main  # Uruchomi się przy pushu na gałąź master
   pull_request:
     branches:
-      - master  # Uruchomi się przy pull requestach na gałąź master
+      - main  # Uruchomi się przy pull requestach na gałąź master
 
 permissions: read-all  # Ustawienia uprawnień, które umożliwiają dostęp do wszystkich zasobów repozytorium
 
@@ -107,6 +107,6 @@ jobs:
           git add -A  
           if [[ $(git status --porcelain) ]]; then
             git commit -m "Automatically added GitHub issue links to TODOs" 
-            git push origin master  
+            git push origin main  
           else
             echo "No changes to commit"  
