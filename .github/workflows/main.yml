@@ -59,14 +59,11 @@ jobs:
         with:
           fetch-depth: 0
 
-       # 2. Instalujemy Prettier i formatowanie dla plików JS/HTML/CSS
+       
       - name: Prettier format
         run: npx prettier --write .github/workflows/**/*.yml
 
-      # 3. Uruchamiamy Prettier na plikach JS, HTML, CSS, itp.
-      - name: Run Prettier
-        run: |
-          prettier --write "**/*.{js,jsx,ts,tsx,html,css,json,md}"
+      
 
       # 4. Uruchamiamy Super-Linter
       - name: Super-Linter
