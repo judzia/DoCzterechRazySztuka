@@ -1,6 +1,5 @@
-import os
 import csv
-
+import os
 # Importing students from file
 def import_from_file():
     students = []
@@ -26,14 +25,12 @@ def import_from_file():
     except FileNotFoundError:
         print("Nie znaleziono pliku 'students.csv'.")
         return []
-
 # Exporting attendance
 def export_attendance(students):
     with open('students.csv', 'w', newline='') as file:
         for student in students:
             present = 'yes' if student['present'] else 'no'
-            file.write(f"{student['first_name']},{student['last_name']},{present}\n")
-        
+            file.write(f"{student['first_name']},{student['last_name']},{present}\n")     
 # Adding new student
 def add_student():
     first_name = input("Podaj imię studenta: ")
@@ -45,8 +42,6 @@ def add_student():
     with open('students.csv', 'a', newline='') as file:
         file.write(f"{first_name},{last_name},no\n")
     print(f"Student {first_name} {last_name} został dodany.")
-
-
 # Editing info about students
 def edit_student():
     old_first_name = input("Podaj imię studenta do edycji: ")
@@ -62,8 +57,6 @@ def edit_student():
             break
     export_attendance(students)
     print(f"Zaktualizowano dane studenta: {new_first_name} {new_last_name}.")
-
-
 # Editing attendance 
 def edit_attendance():
     student_name = input("Podaj imię i nazwisko studenta (np. Jan Kowalski): ")
@@ -82,8 +75,6 @@ def edit_attendance():
         print(f"Student {student_name} nie istnieje w bazie danych.")
 
     export_attendance(students)
-
-
 # Menu 
 def menu():
     while True:
@@ -115,7 +106,6 @@ def menu():
             break
         else:
             print("Nieprawidłowy wybór. Spróbuj ponownie.")
-
 
 if __name__ == "__main__":
     menu()
