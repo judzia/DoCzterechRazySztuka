@@ -3,10 +3,10 @@ name: Unit tests, TODOs to issues and linting
 on:
   push:
     branches:
-      - main  # Uruchomi się przy pushu na gałąź master
+      - main  # Uruchomi się przy pushu na gałąź main
   pull_request:
     branches:
-      - main  # Uruchomi się przy pull requestach na gałąź master
+      - main  # Uruchomi się przy pull requestach na gałąź main
 
 permissions: read-all  # Ustawienia uprawnień, które umożliwiają dostęp do wszystkich zasobów repozytorium
 
@@ -19,94 +19,78 @@ jobs:
       # 1. Sprawdzamy kod z repozytorium
       - uses: actions/checkout@v4
 
-      # 2. Caching dla zależności Pythona, aby przyspieszyć kolejne uruchomienia pipeline
+      # 2. Cache dla zależności Pythona
       - name: Cache pip dependencies
         uses: actions/cache@v3
         with:
-          path: ~/.cache/pip  # Określamy ścieżkę, gdzie zapisujemy zależności
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}  # Klucz cache oparty na pliku requirements.txt
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
           restore-keys: |
-            ${{ runner.os }}-pip-  
+            ${{ runner.os }}-pip-
 
-      # 3. Instalowanie Pythona 
+      # 3. Instalowanie Pythona
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'  
+          python-version: '3.9'
 
-      # 4. Instalowanie zależności (np. coverage do raportowania pokrycia kodu)
+      # 4. Instalowanie zależności
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip  
-          pip install coverage  
+          python -m pip install --upgrade pip
+          pip install coverage
 
-      # 5. Uruchamiamy testy jednostkowe i generujemy raport pokrycia
+      # 5. Uruchamianie testów jednostkowych
       - name: Run tests with coverage
         run: |
-          coverage run -m unittest discover test  
-          coverage report 
-          coverage html  
+          coverage run -m unittest discover test
+          coverage report
+          coverage html
 
   # Job 2: Lintowanie kodu
   lint:
     needs: test  # Job lintowania uruchomi się po zakończeniu testów
-    runs-on: ubuntu-latest  # Uruchomi się na systemie Ubuntu
-
-    permissions:
-      contents: read  # Pozwalamy na odczyt zawartości repozytorium
-      packages: read  # Dostęp do pakietów
-      statuses: write  # Pozwalamy na zapisywanie statusów
+    runs-on: ubuntu-latest
 
     steps:
       # 1. Sprawdzamy kod z repozytorium
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Pobieramy pełną historię commitów
+          fetch-depth: 0
 
-      # 2. Formatowanie plików YML przy użyciu Prettiera
-      - name: Prettier format
-        run: npx prettier --write .github/workflows/**/*.yml  # Formatujemy pliki .yml
-
-      # 3. Uruchamiamy SuperLinter (sprawdzanie poprawności kodu)
+      # 2. Uruchamiamy Super-Linter
       - name: Super-Linter
-        uses: super-linter/super-linter/slim@v7.1.0  # Używamy wersji Slim SuperLintera
+        uses: github/super-linter@v5.1.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Token do komunikacji z GitHub
-          VALIDATE_PYTHON_RUFF: true  # Włączamy walidację dla Pythona (w tym przypadku z linterem Ruff)
+          VALIDATE_PYTHON: true  # Walidacja dla Pythona
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # Job 3: Tworzenie Issues z TODO w kodzie
+  # Job 3: Tworzenie Issues z TODO
   todo-to-issue:
-    runs-on: ubuntu-latest  # Uruchomi się na systemie Ubuntu
-
-    permissions:
-      issues: write  # Pozwalamy na tworzenie i zarządzanie Issues
-      contents: write  # Pozwalamy na zapisywanie zmian w repozytorium
+    runs-on: ubuntu-latest
 
     steps:
       # 1. Sprawdzamy kod z repozytorium
       - uses: actions/checkout@v4
 
-      # 2. Uruchamiamy akcję do zamiany TODO na Issues w GitHub
-      - name: "TODO to Issue"
-        uses: "alstr/todo-to-issue-action@v5"
+      # 2. Uruchamiamy akcję do zamiany TODO na Issues
+      - name: Convert TODOs to GitHub Issues
+        uses: alstr/todo-to-issue-action@v5
         with:
-          INSERT_ISSUE_URLS: "true"  # Dodajemy linki do Issues w miejscach TODO w kodzie
-          CLOSE_ISSUES: "true"  # Zamykamy Issues po ich utworzeniu
-          AUTO_ASSIGN: "true"  # Automatycznie przypisujemy zadania do autora
+          INSERT_ISSUE_URLS: true
+          CLOSE_ISSUES: true
+          AUTO_ASSIGN: true
 
-      # 3. Ustawiamy globalnie użytkownika Git, aby commitować zmiany
-      - name: Set Git user
-        run: |
-          git config --global user.name "github-actions[bot]"  
-          git config --global user.email "github-actions[bot]@users.noreply.github.com" 
-
-      # 4. Sprawdzamy, czy są zmiany do commitowania, a jeśli tak, commitujemy i pushujemy
+      # 3. Commit i push zmian, jeśli istnieją
       - name: Commit and Push Changes
         run: |
-          git add -A  
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
           if [[ $(git status --porcelain) ]]; then
-            git commit -m "Automatically added GitHub issue links to TODOs" 
-            git push origin main  
+            git commit -m "Automatically added GitHub issue links to TODOs"
+            git push origin main
           else
-            echo "No changes to commit"  
+            echo "No changes to commit"
+          fi
