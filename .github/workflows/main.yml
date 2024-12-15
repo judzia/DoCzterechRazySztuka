@@ -60,9 +60,8 @@ jobs:
           fetch-depth: 0
 
        # 2. Instalujemy Prettier i formatowanie dla plików JS/HTML/CSS
-      - name: Install Prettier
-        run: |
-          npm install -g prettier
+      - name: Prettier format
+        run: npx prettier --write .github/workflows/**/*.yml
 
       # 3. Uruchamiamy Prettier na plikach JS, HTML, CSS, itp.
       - name: Run Prettier
@@ -71,10 +70,11 @@ jobs:
 
       # 4. Uruchamiamy Super-Linter
       - name: Super-Linter
-        uses: github/super-linter@v5
+        uses: super-linter/super-linter/slim@v7.1.0
         env:
-         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         VALIDATE_PYTHON_RUFF: true
+          # To report GitHub Actions status checks
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_PYTHON_RUFF: true
 
   # Job 3: Tworzenie Issues z TODO
   todo-to-issue:
