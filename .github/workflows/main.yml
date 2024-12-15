@@ -104,3 +104,27 @@ jobs:
           else
             echo "No changes to commit"
           fi
+  # Job 4: Formatowanie kodu Python
+  format:
+    needs: test  # Job formatowania uruchomi się po zakończeniu testów
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Sprawdzamy kod z repozytorium
+      - uses: actions/checkout@v4
+
+      # 2. Instalowanie zależności dla formatowania kodu Python
+      - name: Install Python dependencies for formatting
+        run: |
+          python -m pip install --upgrade pip
+          pip install black isort
+
+      # 3. Uruchamiamy isort (porządkowanie importów)
+      - name: Run isort
+        run: |
+          isort .
+
+      # 4. Uruchamiamy black (formatowanie kodu)
+      - name: Run black
+        run: |
+          black .
