@@ -61,10 +61,10 @@ jobs:
 
       # 2. Uruchamiamy Super-Linter
       - name: Super-Linter
-        uses: github/super-linter@v5.1.0
+        uses: github/super-linter@v5
         env:
-          VALIDATE_PYTHON: true  # Walidacja dla Pythona
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         VALIDATE_PYTHON_RUFF: true
 
   # Job 3: Tworzenie Issues z TODO
   todo-to-issue:
