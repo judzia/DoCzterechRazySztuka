@@ -70,6 +70,7 @@ jobs:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_PYTHON_RUFF: true
+          RUN_LINTERS: "ruff"  # Uruchomienie tylko lintera ruff
 
   # Job 3: Tworzenie Issues z TODO
   todo-to-issue:
