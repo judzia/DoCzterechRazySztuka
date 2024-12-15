@@ -59,16 +59,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 2. Instalowanie zależności dla lintera
-      - name: Install ruff for linting
-        run: |
-          python -m pip install --upgrade pip
-          pip install ruff
-      # 3. Uruchamiamy ruff (linter Pythona) z opcją naprawy błędów
-      - name: Run ruff with fix option
-        run: |
-          ruff --fix .
-
+      - name: Prettier format
+        run: npx prettier --write .github/workflows/**/*.yml
+      
 
       # 4. Uruchamiamy Super-Linter
       - name: Super-Linter
