@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import patch, mock_open
-from main import *  #  importing functions
+from main import export_attendance
+
 
 class TestExportAttendance(unittest.TestCase):
-
     @patch("builtins.open", new_callable=mock_open)  # students list has data
     def test_export_students(self, mock_file):
         students = [
@@ -20,6 +20,6 @@ class TestExportAttendance(unittest.TestCase):
         export_attendance(students)
         mock_file().write.assert_not_called()
 
+
 if __name__ == "__main__":
     unittest.main()
-    

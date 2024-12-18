@@ -1,36 +1,42 @@
-import csv
-import os
 # Importing students from file
 def import_from_file():
     students = []
     try:
-        with open('students.csv', 'r', newline='') as file:
+        with open("students.csv", "r", newline="") as file:
             for line in file:
-                cut_parts = line.strip().split(',')
-                if len(cut_parts) == 2:  # attendance status not provided 
-                    students.append({
-                        'first_name': cut_parts[0].strip(),
-                        'last_name': cut_parts[1].strip(),
-                        'present': False
-                    })
+                cut_parts = line.strip().split(",")
+                if len(cut_parts) == 2:  # attendance status not provided
+                    students.append(
+                        {
+                            "first_name": cut_parts[0].strip(),
+                            "last_name": cut_parts[1].strip(),
+                            "present": False,
+                        }
+                    )
                 elif len(cut_parts) == 3:  # attendance status given
-                    students.append({
-                        'first_name': cut_parts[0].strip(),
-                        'last_name': cut_parts[1].strip(),
-                        'present': cut_parts[2].strip().lower() == 'yes'
-                    })
+                    students.append(
+                        {
+                            "first_name": cut_parts[0].strip(),
+                            "last_name": cut_parts[1].strip(),
+                            "present": cut_parts[2].strip().lower() == "yes",
+                        }
+                    )
                 else:
-                    print('Wystąpił błąd podczas importowania danych.')
+                    print("Wystąpił błąd podczas importowania danych.")
         return students
     except FileNotFoundError:
         print("Nie znaleziono pliku 'students.csv'.")
         return []
+
+
 # Exporting attendance
 def export_attendance(students):
-    with open('students.csv', 'w', newline='') as file:
+    with open("students.csv", "w", newline="") as file:
         for student in students:
-            present = 'yes' if student['present'] else 'no'
-            file.write(f"{student['first_name']},{student['last_name']},{present}\n")     
+            present = "yes" if student["present"] else "no"
+            file.write(f"{student['first_name']},{student['last_name']},{present}\n")
+
+
 # Adding new student
 def add_student():
     first_name = input("Podaj imię studenta: ")
@@ -38,10 +44,12 @@ def add_student():
 
     if not first_name or not last_name:
         raise ValueError("Imię i nazwisko są wymagane!")
-    
-    with open('students.csv', 'a', newline='') as file:
+
+    with open("students.csv", "a", newline="") as file:
         file.write(f"{first_name},{last_name},no\n")
     print(f"Student {first_name} {last_name} został dodany.")
+
+
 # Editing info about students
 def edit_student():
     old_first_name = input("Podaj imię studenta do edycji: ")
@@ -51,13 +59,18 @@ def edit_student():
 
     students = import_from_file()
     for student in students:
-        if student['first_name'] == old_first_name and student['last_name'] == old_last_name:
-            student['first_name'] = new_first_name
-            student['last_name'] = new_last_name
+        if (
+            student["first_name"] == old_first_name
+            and student["last_name"] == old_last_name
+        ):
+            student["first_name"] = new_first_name
+            student["last_name"] = new_last_name
             break
     export_attendance(students)
     print(f"Zaktualizowano dane studenta: {new_first_name} {new_last_name}.")
-# Editing attendance 
+
+
+# Editing attendance
 def edit_attendance():
     student_name = input("Podaj imię i nazwisko studenta (np. Jan Kowalski): ")
     students = import_from_file()
@@ -67,7 +80,7 @@ def edit_attendance():
         if f"{student['first_name']} {student['last_name']}" == student_name:
             found = True
             status = input(f"Obecność dla {student_name} (tak/nie): ").strip().lower()
-            student['present'] = (status == 'tak')
+            student["present"] = status == "tak"
             print(f"Obecność dla {student_name} została zaktualizowana.")
             break
 
@@ -75,7 +88,9 @@ def edit_attendance():
         print(f"Student {student_name} nie istnieje w bazie danych.")
 
     export_attendance(students)
-# Menu 
+
+
+# Menu
 def menu():
     while True:
         print("\nMENU:")
@@ -106,6 +121,7 @@ def menu():
             break
         else:
             print("Nieprawidłowy wybór. Spróbuj ponownie.")
+
 
 if __name__ == "__main__":
     menu()
