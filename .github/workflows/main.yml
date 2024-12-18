@@ -3,23 +3,18 @@ name: Unit tests, TODOs to issues and linting
 on:
   push:
     branches:
-      - main  # Uruchomi się przy pushu na gałąź main
+      - main
   pull_request:
     branches:
-      - main  # Uruchomi się przy pull requestach na gałąź main
+      - main
 
-permissions: read-all  # Ustawienia uprawnień, które umożliwiają dostęp do wszystkich zasobów repozytorium
+permissions: read-all
 
 jobs:
-  # Job 1: Uruchomienie testów jednostkowych z pokryciem
   test:
-    runs-on: ubuntu-latest  # Uruchomi się na systemie Ubuntu
-
+    runs-on: ubuntu-latest
     steps:
-      # 1. Sprawdzamy kod z repozytorium
       - uses: actions/checkout@v4
-
-      # 2. Cache dla zależności Pythona
       - name: Cache pip dependencies
         uses: actions/cache@v3
         with:
@@ -27,78 +22,65 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-
-      # 3. Instalowanie Pythona
+            
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
-
-      # 4. Instalowanie zależności
-      - name: Install dependencies
+          python-version: '3.12'
+      - name: "Install dependencies"
         run: |
           python -m pip install --upgrade pip
           pip install coverage
-          pip install black isort ruff
 
-      - name: Lint and format code
-        run: |
-          black .
-          isort .
-          
-
-      # 5. Uruchamianie testów jednostkowych
-      - name: Run tests with coverage
+      - name: "Run tests with coverage"
         run: |
           coverage run -m unittest discover test
           coverage report
           coverage html
 
-  # Job 2: Lintowanie kodu
   lint:
-    needs: test  # Job lintowania uruchomi się po zakończeniu testów
+    needs: test
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+
     steps:
-      # 1. Sprawdzamy kod z repozytorium
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Prettier format
         run: npx prettier --write .github/workflows/**/*.yml
-      
-      # 4. Uruchamiamy Super-Linter
       - name: Super-Linter
         uses: super-linter/super-linter/slim@v7.1.0
         env:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_PYTHON_RUFF: true
-          
 
-  # Job 3: Tworzenie Issues z TODO
   todo-to-issue:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: write
 
     steps:
-      # 1. Sprawdzamy kod z repozytorium
-      - uses: actions/checkout@v4
-
-      # 2. Uruchamiamy akcję do zamiany TODO na Issues
-      - name: Convert TODOs to GitHub Issues
-        uses: alstr/todo-to-issue-action@v5
+      - uses: "actions/checkout@v4"
+      - name: "TODO to Issue"
+        uses: "alstr/todo-to-issue-action@v5"
         with:
-          INSERT_ISSUE_URLS: true
-          CLOSE_ISSUES: true
-          AUTO_ASSIGN: true
-
-      # 3. Commit i push zmian, jeśli istnieją
-      - name: Commit and Push Changes
+          INSERT_ISSUE_URLS: "true"
+          CLOSE_ISSUES: "true"
+          AUTO_ASSIGN: "true"
+      - name: Set Git user
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Commit and Push Changes
+        run: |
           git add -A
           if [[ $(git status --porcelain) ]]; then
             git commit -m "Automatically added GitHub issue links to TODOs"
@@ -106,27 +88,3 @@ jobs:
           else
             echo "No changes to commit"
           fi
-  # Job 4: Formatowanie kodu Python
-  format:
-    needs: test  # Job formatowania uruchomi się po zakończeniu testów
-    runs-on: ubuntu-latest
-
-    steps:
-      # 1. Sprawdzamy kod z repozytorium
-      - uses: actions/checkout@v4
-
-      # 2. Instalowanie zależności dla formatowania kodu Python
-      - name: Install Python dependencies for formatting
-        run: |
-          python -m pip install --upgrade pip
-          pip install black isort
-
-      # 3. Uruchamiamy isort (porządkowanie importów)
-      - name: Run isort
-        run: |
-          isort .
-
-      # 4. Uruchamiamy black (formatowanie kodu)
-      - name: Run black
-        run: |
-          black .
