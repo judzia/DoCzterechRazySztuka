@@ -3,7 +3,7 @@ name: Publish to Test PyPI
 on:
   push:
     branches:
-      - main
+      - 'v[0-9]+.[0-9]+.[0-9]+-test'
 
 jobs:
   build-and-publish:
