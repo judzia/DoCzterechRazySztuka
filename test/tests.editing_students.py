@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from main import edit_student
+from src.main import edit_student
 
 
 class TestEditStudent(unittest.TestCase):

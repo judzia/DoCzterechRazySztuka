@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, mock_open
-from main import import_from_file
+from src.main import import_from_file
 
 
 class TestImportFromFile(unittest.TestCase):

@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, mock_open
-from main import export_attendance
+from src.main import export_attendance
 
 
 class TestExportAttendance(unittest.TestCase):
